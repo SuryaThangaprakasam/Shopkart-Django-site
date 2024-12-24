@@ -1,0 +1,27 @@
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            Shopkart
+            <img src="https://th.bing.com/th/id/R.984e6c563e1b12f4849dbdd29af55429?rik=C%2faY251Os%2fhFlg&riu=http%3a%2f%2ffindicons.com%2ffiles%2ficons%2f1700%2f2d%2f512%2fcart.png&ehk=%2fd%2b3k%2fPNfjLeO50WugykB6pL47QGhiPC7t4K9IG2e4c%3d&risl=&pid=ImgRaw&r=0" alt="cart" height="22px">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link active" aria-current="page" href="/"><i class="fa fa-home"></i> Home</a>
+                <a class="nav-link" href="/collections"><i class="fa fa-tags"></i> Collections</a>
+                <a class="nav-link" href="/cart"><i class="fa fa-shopping-cart"></i> Cart</a>
+                <a class="nav-link" href="/wishlist"><i class="fa fa-heart"></i> Wishlist</a>
+                {% if request.user.is_authenticated %}
+                    <a class="nav-link" href="#"><i class="fa fa-user"></i> {{request.user}}</a>
+                    <a class="nav-link" href="/logout"><i class="fa fa-sign-out"></i> Logout</a>
+                {% else %}
+                <a class="nav-link" href="/register"><i class="fa fa-users"></i> Register</a>
+                <a class="nav-link" href="/login"><i class="fa fa-sign-in"></i> Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

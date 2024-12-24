@@ -1,0 +1,138 @@
+{% extends '_main.html' %}
+{% load humanize %}
+
+{% block title %}
+Shop | {{product.name}}
+{% endblock title %}
+
+{% block body %}
+
+<section class="container py-4" style="margin-top: 4rem;">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h4 class="mb-3">Awesome Product</h4>
+            <hr style="border: 1px solid rgb(126,126,126);">
+            {% include '_messages.html' %}
+        </div>
+    </div>
+
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/collections">Collections</a></li>
+            <li class="breadcrumb-item"><a href="/collections/{{product.category}}">{{product.category}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{product.name}}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        {% if product.product_image %}
+        <div class="col-md-5 col-lg-4 my-3 pic-box">
+            {% if product.trending == 0 %}
+            <div class="hot">Hot</div>
+            {% endif %}
+            <img src="{{product.product_image.url}}" class="card-img-top" alt="product_image">
+        </div>
+        {% endif %}
+
+        <div class="col-md-7 col-lg-8 my-4">
+            <input type="hidden" value="{{product.id}}" id="pid">
+            <h3 class="text-primary">{{product.name | upper}}</h3>
+            <p>{{product.vendor}}</p>
+            <p>{{product.description}}</p>
+            <h4 class="my-2 text-success"> Offer Price: <i class="fa fa-rupee"></i> {{product.selling_price | stringformat:'d' | intcomma}}</h4> 
+            <h5 class="my-2 text-danger"> Real Price: <i class="fa fa-rupee"></i> <s>{{product.original_price | stringformat:'d' | intcomma}}</s></h5>
+            <div class="input-group" style="width: 150px;">
+                <button class="input-group-text bg-success text-light" type="button" id="btnMinus"><i class="fa fa-minus"></i></button>
+                <input type="text" class="form-control text-center" name="qty" id="proQty" value='1'>
+                <button class="input-group-text bg-success text-light" type="button" id="btnPlus"><i class="fa fa-plus"></i></button>
+            </div>
+            <div class="my-3">
+                {% if product.quantity > 0 %}
+                <button class="btn btn-primary" id="btnCart" type="button"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+                    {% else %}
+                    <button class="btn btn-secondary"><i class="fa fa-times"></i> Out of Stock</button>
+                {% endif %}    
+                <button class="btn btn-danger" id="btnWish" title="Add to Wishlist"><i class="fa fa-heart"></i></button>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(event){
+        const plusBtn = document.getElementById('btnPlus');
+        const minusBtn = document.getElementById('btnMinus');
+        const productQty = document.getElementById('proQty');
+
+        plusBtn.addEventListener("click", function(){
+            let qty = parseInt(productQty.value,10);
+            qty = isNaN(qty)?0:qty;         // qty = condition ? true : false;
+            if (qty < 5){
+                qty++;
+                productQty.value = qty
+            }
+        });
+        minusBtn.addEventListener("click", function(){
+            let qty = parseInt(productQty.value,10);
+            qty = isNaN(qty)?0:qty;         // qty = condition ? true : false;
+            if (qty > 1){
+                qty--;
+                productQty.value = qty;
+            }
+        });
+
+        const cartBtn = document.getElementById('btnCart');
+        const pid = document.getElementById('pid');
+
+        cartBtn.addEventListener("click", function(){
+            let qty = parseInt(productQty.value,10);
+            qty = isNaN(qty)?0:qty;
+            if(qty>0){
+                let postObj = {'product_qty': qty,'pid': pid.value}; // qty, pid.value
+                // console.log(postObj);
+                fetch("/addtocart",{
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers:{'Accept':'application/json', 'x-Requested-With':'XMLHttpRequest', 'X-CSRFToken':'{{ csrf_token }}'},
+                    body: JSON.stringify(postObj)
+                }).then(reponse => {
+                    return reponse.json();
+                }).then(data => {
+                    // console.log(data);
+                    alert(data['status']);
+                }).catch(error => {
+                    console.error("Error:",error)
+                });
+            }else{
+                alert("Please Enter the Quantity");
+            }
+        });
+
+        const wishBtn = document.getElementById('btnWish');
+        
+        wishBtn.addEventListener("click", function(){
+            let postObj = {'pid': pid.value};
+            console.log(postObj);
+            fetch("/addtowishlist",{
+                method: 'POST',
+                credentials: 'same-origin',
+                headers:{'Accept':'application/json', 'x-Requested-With':'XMLHttpRequest', 'X-CSRFToken':'{{ csrf_token }}'},
+                body: JSON.stringify(postObj)
+            }).then(reponse => {
+                return reponse.json();
+            }).then(data => {
+                console.log(data);
+                alert(data['status']);
+            }).catch(error => {
+                console.error("Error:",error)
+            });
+        });
+
+
+    });
+</script>
+
+{% endblock body %}

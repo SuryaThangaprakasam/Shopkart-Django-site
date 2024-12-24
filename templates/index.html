@@ -1,0 +1,43 @@
+{% extends '_main.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+Shop | Online Shoping
+{% endblock title %}
+
+{% block body %}
+
+{% include '_carousel.html' %}
+
+<section class="container py-2" style="margin-top: 1rem;">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2 class="mb-3">Trending Products</h2>
+            <hr style="border: 1px solid rgb(126, 126, 126);">
+            {% include '_messages.html' %}
+        </div>
+    </div>
+
+    <div class="row">
+        {% for item in trending_products %}
+        <div class="col-md-4 col-lg-3">
+            <div class="card my-3" style="height: 95%; justify-content: center;margin-top: 1rem;">
+                <img src='{{item.product_image.url}}' class="card-img-top" alt="{{item.name}}">
+                <a href="/collections/{{item.category}}/{{item.name}}" class="crd-links">
+                    <div class="card-body">
+                        <h5 class="card-title">{{item.name}}</h5>
+                        <!-- <p class="card-text">{{item.description}}</p> -->
+                        <p class="card-text">
+                            <span class="float-start old_price"><s>₹{{item.original_price | stringformat:'d' | intcomma}}</s></span>
+                            <span class="float-end new_price">₹{{item.selling_price | stringformat:'d' | intcomma}}</span>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock body %}

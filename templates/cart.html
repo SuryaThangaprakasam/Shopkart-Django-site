@@ -1,0 +1,74 @@
+{% extends "_main.html" %}
+{% load humanize %}
+
+{% block title %}
+    Shop | Your Cart
+{% endblock title %}
+
+{% block body %}
+
+<section class="container py-4" style="margin-top:4rem;">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h4 class="mb-3">Cart</h4>
+            <hr style="border: 1px solid rgb(126, 126, 126);">
+            {% include '_messages.html' %}
+        </div>
+    </div>
+
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Cart</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table cart_table">
+                <thead>
+                    <tr>
+                        <th>Images</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                    <tr style="vertical-align:middle;">
+                        <td><img src='{{item.product.product_image.url}}' height="75px" alt="{{item.product.name}}"></td>
+                        <td><a href="/collections/{{item.product.category}}/{{item.product.name}}" class="crd-links">{{item.product.name}}</a></td>
+                        <td>{{item.product_qty}} X ₹{{item.product.selling_price | stringformat:'d' | intcomma}} </td>
+                        <td class="amount" data-value="{{item.total_price}}">₹{{item.total_price | stringformat:'d' | intcomma}}</td>
+                        <td><a class="btn btn-danger btn-sm" href="/cart/remove/{{item.id}}" onclick="return confirm('Are you sure, to remove this `{{item.product.name}}`')"><i class="fa fa-trash"></i> Remove</a></td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <th class="text-center" colspan="3" style="font-weight: bold;">Total Amount</th>
+                        <th id="netAmount" colspan="2" style="font-weight: bold;">0</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    const nodes = document.querySelectorAll('.amount');
+    // console.log("nodes",nodes)
+    const arr = Array.from(nodes);
+    // console.log('arr',arr)
+    const total = arr.reduce((acc, curr)=>{
+        // console.log('acc',acc)
+        // console.log('curr',curr)
+        return acc += Number(curr.getAttribute('data-value'))       //Access the data-value or (curr.dataset.value),  for document text use (curr.textContent)
+    },0);
+    // console.log('total',total)
+    document.getElementById('netAmount').innerHTML="₹"+total.toLocaleString();      //toLocaleString will make 11000 to 11,000 same like intcomma
+</script>
+
+{% endblock body %}

@@ -1,0 +1,54 @@
+{% extends "_main.html" %}
+{% load humanize %}
+
+{% block title %}
+    Shop | Your Wishlist
+{% endblock title %}
+
+{% block body %}
+
+<section class="container py-4" style="margin-top:4rem;">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h4 class="mb-3">Wishlist</h4>
+            <hr style="border: 1px solid rgb(126, 126, 126);">
+            {% include '_messages.html' %}
+        </div>
+    </div>
+
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Wishlist</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Images</th>
+                        <th>Product Name</th>
+                        <th>Amount</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in wishlist %}
+                    <tr style="vertical-align:middle;">
+                        <td><img src='{{item.product.product_image.url}}' height="75px" alt="{{item.product.name}}"></td>
+                        <td><a href="/collections/{{item.product.category}}/{{item.product.name}}" class="crd-links">{{item.product.name}}</a></td>
+                        <td>₹{{item.product.selling_price | stringformat:'d' | intcomma}}</td>
+                        <td><a class="btn btn-danger btn-sm" href="/wishlist/remove/{{item.id}}" onclick="return confirm('Are you sure, to remove this `{{item.product.name}}`')"><i class="fa fa-trash"></i> Remove</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+{% endblock body %}
